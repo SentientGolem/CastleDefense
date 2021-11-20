@@ -52,7 +52,6 @@ class mapGen():
         # For every 100 tiles, there will be 1 mountain seed +- 1
         self.mountainSeed = ceil(self.mapSize/10) + randint(floor(self.mapSize / -100), floor(self.mapSize / 100))
         print('Mountain Seeds ', self.mountainSeed)
-        self.log = []
         self.seedMountain()
         self.allMountains = []
         while self.mountainSeed >= 1:
@@ -72,7 +71,6 @@ class mapGen():
         # Doesn't need to check for a plains
         if self.board[self.rand1][self.rand2] != self.mountainCode:
             self.placeSeedMountain(self.rand1, self.rand2)
-            self.log.append('Seeded Mountain at (%d, %d)' % (self.rand1, self.rand2))
             self.mountainSeed -= 1
 
     def placeSeedMountain(self, y, x):
@@ -238,7 +236,6 @@ class mapGen():
             idy = self.mountainCoordinates[0]
             idx = self.mountainCoordinates[1] # Sets the new mountain
             self.board[idy][idx] = self.mountainCode
-            self.log.append('Placed Mountain at (%d, %d)' % (idy, idx))
             self.mountainSeed -= 1
 
     def addSilver(self):
