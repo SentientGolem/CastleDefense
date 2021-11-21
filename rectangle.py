@@ -2,7 +2,7 @@ class Rectangle:
     def __init__(self, x1, y1, x2, y2,
                 tType, worker,
                 resource, rProduction,
-                armySize):
+                armySize, player):
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
@@ -12,6 +12,7 @@ class Rectangle:
         self.resource = resource
         self.rProduction = rProduction
         self.armySize = armySize
+        self.player = player
 
     def contains(self, newx, newy):
         # Will return true if the given point (newx, newy) 

@@ -17,6 +17,8 @@ class Main:
         # The map itself is under the board attribute 
         # Which is an ImageTk type
         self.pixMap = mapGen(self.master)
+        # Player(self, ID, silver, metal, stone, wood, food, population)
+        self.player = Player(1, 0, 0, 0, 0, 0 , 1)
 
         self.make_Container()
         self.make_Label()
@@ -70,15 +72,26 @@ class Main:
                 self.x = int((rectangles.y1 / self.pixMap.tileSize) + 1)
                 self.y = int((rectangles.x1 / self.pixMap.tileSize) + 1)
                 # Calls the change that should happen
-                self.changeTile(self.x, self.y)
+                if self.player.can_Claim() == 'castle':
+                    self.changeTile(self.x, self.y, 'castle')
+                    self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+                elif self.player.can_Claim() == True:
+                    self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+                elif self.player.can_Claim() == False:
+                    print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
                 # Returns the function so that multiple rectangles can't be clicked
                 return
 
 
-    def changeTile(self, x, y):
-
+    def changeTile(self, x, y, newTile):
         # Changes the ASCII board that the picture is based on
-        self.pixMap.boardASCII[x - 1][y - 1] = self.pixMap.forestCode
+        if newTile == 'castle':
+            tile = self.pixMap.castle
+            code = self.pixMap.castleCode
+        elif newTile == 'plains':
+            tile = self.pixMap.plains
+            code = self.pixMap.plainsCode
+        self.pixMap.boardASCII[x - 1][y - 1] = code
         # Remakes the picture with the new ASCII board
         self.pixMap.board = self.pixMap.setBoard()
         # Deletes the old map from the canvas
@@ -97,11 +110,11 @@ class Main:
             if rectangles.contains(self.xClick, self.yClick):
                 self.text.config(state = NORMAL)
                 self.text.delete('1.0', 'end')
-                self.text.insert('end', '%s\nWorking: %s\nResource: %s\nProduces: %d\n Army: %d\nCoordinates: (%d, %d)' %
+                self.text.insert('end', '%s\nWorking: %s\nResource: %s\nProduces: %d\n Army: %d\nCoordinates: (%d, %d)\nPlayer: %d' %
                                  (rectangles.tType, rectangles.worker,
                                   rectangles.resource, rectangles.rProduction,
-                                 rectangles.armySize, (rectangles.y2 / self.pixMap.tileSize) - 1,
-                                  (rectangles.x2 / self.pixMap.tileSize) - 1))
+                                 rectangles.armySize, (rectangles.x2 / self.pixMap.tileSize) - 1,
+                                  (rectangles.y2 / self.pixMap.tileSize) - 1, ))
                 self.text.config(state = DISABLED)
 
     def toggleText(self, event):
@@ -218,13 +231,22 @@ class Main:
         # onto the coordinates for different areas.
         self.grid = {}
         self.grid.clear()
-        for x in range(self.pixMap.boardSize + 1):
-            for y in range(self.pixMap.boardSize + 1):
-                self.name = '(%s, %s)' % (x, y)
+        # This creates a loop that is one larger than the boardsize
+        # And it stands in for the y coordinate
+        for y in range(self.pixMap.boardSize + 1):
+            # This creates another loop, while y is 0, x will iterate through 100
+            # And it stands in for the x coordinate
+            for x in range(self.pixMap.boardSize + 1):
+                self.name = '(%s, %s)' % (x-1, y-1)
+                # Creates the far left bound of the rectangle
                 x1 = (y - 1) * self.pixMap.tileSize
+                # Creates the upper bound of the rectangle
                 y1 = (x - 1) * self.pixMap.tileSize
+                # Creates the rightmost bound of the rectangle
                 x2 = y * self.pixMap.tileSize
+                # Creates the bottom bound of the rectangle
                 y2 = x * self.pixMap.tileSize
+                # Creates an array that breaks apart the code for the tile
                 array = list(self.pixMap.boardASCII[x-1][y-1])
                 array[1] = int(array[1])
                 array[2] = int(array[2])
@@ -232,23 +254,28 @@ class Main:
                 if array[0]  == 'f':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
                                                      'Forest', False,
-                                                     'Wood', array[1], array[2])
+                                                     'Wood', array[1], array[2],
+                                                    array[3])
                 elif array[0]  == 'p':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
                                                      'Plains', False,
-                                                     'Food', array[1], array[2])
+                                                     'Food', array[1], array[2],
+                                                    array[3])
                 elif array[0] == 's':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
                                                      'Silver Deposit', False,
-                                                     'Silver', array[1], array[2])
+                                                     'Silver', array[1], array[2],
+                                                    array[3])
                 elif array[0] == 'q':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
                                                      'Stone Deposit', False,
-                                                     'Stone', array[1], array[2])
+                                                     'Stone', array[1], array[2],
+                                                    array[3])
                 elif array[0] == 'v':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
                                                      'Mountain', False,
-                                                     'None', array[1], array[2])
+                                                     'None', array[1], array[2],
+                                                    array[3])
 
     def make_Canvas(self):
         self.bgCanvas = Canvas(self.container, background = 'black', width = 1000, height = 1000)

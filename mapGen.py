@@ -30,6 +30,7 @@ class mapGen():
         self.silverCode = 's000'
         self.metalCode = 'm000'
         self.mountainCode = 'v000'
+        self.castleCode = 'c000'
         # Makes a list of lists
         self.board = []
         self.boardSize = 100
@@ -368,6 +369,8 @@ class mapGen():
                     self.boardImage.paste(self.stoneDeposit, ((self.tileSize * idx),(self.tileSize*idy)))
                 elif self.boardASCII[idy][idx] == self.mountainCode:
                     self.boardImage.paste(self.mountain, ((self.tileSize * idx),(self.tileSize*idy)))
+                elif self.boardASCII[idy][idx] == self.castleCode:
+                    self.boardImage.paste(self.castle, ((self.tileSize * idx), (self.tileSize * idy)))
 
         #self.boardImage.show()
         self.boardImageTk = ImageTk.PhotoImage(self.boardImage)
