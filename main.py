@@ -303,6 +303,11 @@ class Main:
                                                      'Castle', False,
                                                      'Stone', array[1], array[2],
                                                      array[3])
+                elif array[0] == 'm':
+                    self.grid[self.name] = Rectangle(x1, y1, x2, y2,
+                                                     'Metal Deposit', False,
+                                                     'Ore', array[1], array[2],
+                                                     array[3])
 
     def update_Grid(self):
         for y in range(self.pixMap.boardSize + 1):
@@ -335,6 +340,8 @@ class Main:
                     self.grid[self.name].tType = 'Mountain'
                 elif array[0] == 'c':
                     self.grid[self.name].tType = 'Castle'
+                elif array[0] == 'm':
+                    self.grid[self.name].tType = 'Metal Deposit'
 
     def make_Canvas(self):
         self.bgCanvas = Canvas(self.container, background = 'black', width = 1000, height = 1000)
