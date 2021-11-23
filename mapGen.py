@@ -22,6 +22,7 @@ class mapGen():
         self.silverMine = Image.open('Images/SilverMine.jpg').resize((self.tileSize, self.tileSize))
         self.stoneDeposit = Image.open('Images/StoneDeposit.jpg').resize((self.tileSize, self.tileSize))
         self.mountain = Image.open('Images/Mountain.png').resize((self.tileSize, self.tileSize))
+        self.metal = Image.open('Images/metal.png').resize((self.tileSize, self.tileSize))
 
     def generateBoard(self):
         self.plainsCode = 'p000'
@@ -43,9 +44,10 @@ class mapGen():
         # This is to keep track of what changes in every iteration
         self.changed = []
         self.addForest()
+        self.addMountain()
         self.addSilver()
         self.addQuarries()
-        self.addMountain()
+        self.addMetal()
 
     def addMountain(self):
         # First we need math to figure out how many mountain seeds we want
@@ -244,15 +246,16 @@ class mapGen():
         # We don't want many Silver Mines, they should be a harder resource to gather
         # We only want a few per map, so maybe 1 per 33 tiles rounded up seems good to me
         # If map size exceeds 50, it will add a random variance but there will always be one
-        self.silverTiles = floor(self.mapSize / 100) + randint((floor(self.mapSize / -200)), floor(self.mapSize / 200))
+        self.silverTiles = floor(self.mapSize / 500) + randint((floor(self.mapSize / -1000)), floor(self.mapSize / 1000))
         if self.silverTiles < 1:
             self.silverTiles = 1
         self.silverExist = False
 
         while self.silverExist == False:
-            self.rand1 = randint(0, (len(self.board) - 1))
-            self.rand2 = randint(0, (len(self.board) - 1))
-            self.board[self.rand1][self.rand2] = self.silverCode
+            self.silverCoordinates = choice(self.allMountains)
+            y = self.silverCoordinates[1]
+            x = self.silverCoordinates[0]
+            self.board[y][x] = self.silverCode
             self.silverTiles -= 1
 
             if self.silverTiles <= 0:
@@ -260,19 +263,37 @@ class mapGen():
 
     def addQuarries(self):
         # Basically this will be the same as the Silver Mines
-        self.stoneTiles = floor(self.mapSize / 100) + randint((floor(self.mapSize / -200)), floor(self.mapSize / 200))
+        self.stoneTiles = floor(self.mapSize / 500) + randint((floor(self.mapSize / -1000)), floor(self.mapSize / 1000))
         if self.stoneTiles < 1:
             self.stoneTiles = 1
         self.stoneExist = False
 
         while self.stoneExist == False:
-            self.rand1 = randint(0, (len(self.board) - 1))
-            self.rand2 = randint(0, (len(self.board) -1))
-            self.board[self.rand1][self.rand2] = self.stoneCode
+            self.stoneCoordinates = choice(self.allMountains)
+            y = self.stoneCoordinates[1]
+            x = self.stoneCoordinates[0]
+            self.board[y][x] = self.stoneCode
             self.stoneTiles -= 1
 
             if self.stoneTiles <= 0:
                 self.stoneExist = True
+
+    def addMetal(self):
+        # Once again, just like the other two before it
+        self.metalTiles = floor(self.mapSize / 500) + randint((floor(self.mapSize / -1000)), floor(self.mapSize / 1000))
+        if self.metalTiles < 1:
+            self.metalTiles = 1
+        self.metalExist = False
+
+        while self.metalExist == False:
+            self.metalCoordiantes = choice(self.allMountains)
+            y = self.metalCoordiantes[1]
+            x = self.metalCoordiantes[0]
+            self.board[y][x] = self.metalCode
+            self.metalTiles -= 1
+
+            if self.metalTiles <= 0:
+                self.metalExist = True
 
     def addForest(self):
         # First iteration will seed a forest and the rest will randomly add adjacent or make a new seed
@@ -372,6 +393,8 @@ class mapGen():
                     self.boardImage.paste(self.mountain, ((self.tileSize * idx),(self.tileSize*idy)))
                 elif array[0] == 'c':
                     self.boardImage.paste(self.castle, ((self.tileSize * idx), (self.tileSize * idy)))
+                elif array[0] == 'm':
+                    self.boardImage.paste(self.metal, ((self.tileSize * idx), (self.tileSize * idy)))
 
         #self.boardImage.show()
         self.boardImageTk = ImageTk.PhotoImage(self.boardImage)

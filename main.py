@@ -127,9 +127,13 @@ class Main:
         if self.text.winfo_ismapped():
             # If it is, hide it away
             self.text.place_forget()
+            self.claimButton.place_forget()
+            self.turnButton.place_forget()
         else:
             # If it isn't, we need to bring it back
             self.text.place(relx = .85, rely = .75)
+            self.turnButton.place(relx = .15, rely = .965, relheight = .035, relwidth = .15)
+            self.claimButton.place(relx = 0, rely = .965, relheight = .035, relwidth = .15)
 
     def move(self, event, deltax, deltay):
         # Changes the x-coordinates of the top-left point of the canvas
@@ -229,7 +233,11 @@ class Main:
         self.claimButton = Button(height = 1, width = 15, bg = '#1318a1', fg = 'white',
                                   bd = 0, font = ("Noto Sans", 12), text = 'Claim',
                                   command = self.claiming)
-        self.claimButton.place(relx = 0, rely = .965)
+        self.claimButton.place(relx = 0, rely = .965, relheight = .035, relwidth = .15)
+
+        self.turnButton = Button(height = 1, width = 15, bg = '#1318a1', fg = 'white',
+                                 bd = 0, font = ("Noto Sans", 12), text = 'End Turn')
+        self.turnButton.place(relx = .15, rely = .965, relheight = .035, relwidth = .15)
 
     def claiming(self):
         if self.claim == True:
