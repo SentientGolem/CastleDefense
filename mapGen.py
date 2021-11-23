@@ -359,17 +359,18 @@ class mapGen():
         self.boardImage = Image.new('RGB', (self.castle.width * self.boardSize, self.castle.height * self.boardSize))
         for idy, row in enumerate(self.boardASCII):
             for idx, column in enumerate(self.boardASCII):
-                if self.boardASCII[idy][idx] == self.plainsCode:
+                array = list(self.boardASCII[idy][idx])
+                if array[0] == 'p':
                     self.boardImage.paste(self.plains, ((self.tileSize * idx),(self.tileSize *idy)))
-                elif self.boardASCII[idy][idx] == self.forestCode:
+                elif array[0] == 'f':
                     self.boardImage.paste(self.forest, ((self.tileSize * idx),(self.tileSize*idy)))
-                elif self.boardASCII[idy][idx] == self.silverCode:
+                elif array[0] == 's':
                     self.boardImage.paste(self.silverMine, ((self.tileSize * idx),(self.tileSize*idy)))
-                elif self.boardASCII[idy][idx] == self.stoneCode:
+                elif array[0] == 'q':
                     self.boardImage.paste(self.stoneDeposit, ((self.tileSize * idx),(self.tileSize*idy)))
-                elif self.boardASCII[idy][idx] == self.mountainCode:
+                elif array[0] == 'v':
                     self.boardImage.paste(self.mountain, ((self.tileSize * idx),(self.tileSize*idy)))
-                elif self.boardASCII[idy][idx] == self.castleCode:
+                elif array[0] == 'c':
                     self.boardImage.paste(self.castle, ((self.tileSize * idx), (self.tileSize * idy)))
 
         #self.boardImage.show()

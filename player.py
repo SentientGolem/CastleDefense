@@ -20,6 +20,9 @@ class Player():
              return True
 
     def claim(self, rectangle, board, x, y):
+        # We need to assign the correct rectangle but the grid
+        # is changed every time a tile is pressed so every time 
+        # a tile is changed or resized, the rectangles change
         if rectangle not in self.claims:
             self.claims.append(rectangle)
             array = list(board[x-1][y-1])

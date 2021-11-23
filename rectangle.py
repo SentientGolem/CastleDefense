@@ -21,3 +21,4 @@ class Rectangle:
         return (self.x1 <= newx <= self.x2) and (self.y1 <= newy <= self.y2)
     def report(self):
         print('(%s, %s), (%s, %s)' % (self.x1, self.y1, self.x2, self.y2))
+        print('tType: %s\nplayer: %d' % (self.tType, self.player))

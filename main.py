@@ -72,16 +72,21 @@ class Main:
                 self.x = int((rectangles.y1 / self.pixMap.tileSize) + 1)
                 self.y = int((rectangles.x1 / self.pixMap.tileSize) + 1)
                 # Calls the change that should happen
-                if self.player.can_Claim() == 'castle':
-                    self.changeTile(self.x, self.y, 'castle')
-                    self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
-                elif self.player.can_Claim() == True:
-                    self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
-                elif self.player.can_Claim() == False:
-                    print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
-                # Returns the function so that multiple rectangles can't be clicked
-                return
+                # Checks if claiming is currently on
+                if self.claim == True:
+                    if self.player.can_Claim() == 'castle':
+                        self.changeTile(self.x, self.y, 'castle')
+                        self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+                    elif self.player.can_Claim() == True:
+                        self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+                    elif self.player.can_Claim() == False:
+                        print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
 
+                    self.update_Grid()
+                else:
+                    print('Claiming is off!')
+                    # Returns the function so that multiple rectangles can't be clicked
+                return
 
     def changeTile(self, x, y, newTile):
         # Changes the ASCII board that the picture is based on
@@ -114,7 +119,7 @@ class Main:
                                  (rectangles.tType, rectangles.worker,
                                   rectangles.resource, rectangles.rProduction,
                                  rectangles.armySize, (rectangles.x2 / self.pixMap.tileSize) - 1,
-                                  (rectangles.y2 / self.pixMap.tileSize) - 1, ))
+                                  (rectangles.y2 / self.pixMap.tileSize) - 1, rectangles.player))
                 self.text.config(state = DISABLED)
 
     def toggleText(self, event):
@@ -220,11 +225,20 @@ class Main:
         self.populationLabel.grid(row = 0, column = 3, sticky = 'NESW')
 
     def make_Button(self):
+        self.claim = False
         self.claimButton = Button(height = 1, width = 15, bg = '#1318a1', fg = 'white',
-                                  bd = 0, font = ("Noto Sans", 12), text = 'Claim')
+                                  bd = 0, font = ("Noto Sans", 12), text = 'Claim',
+                                  command = self.claiming)
         self.claimButton.place(relx = 0, rely = .965)
 
+    def claiming(self):
+        if self.claim == True:
+            self.claim = False
+        elif self.claim == False:
+            self.claim = True
+
     def make_Grid(self):
+
         # This grid should be made dynamically so it will iterate through until
         # it has enough rectangles to fill up the entire canvas. 
         # These aren't a Tkinter object, these are closer to variables holding 
@@ -276,6 +290,43 @@ class Main:
                                                      'Mountain', False,
                                                      'None', array[1], array[2],
                                                     array[3])
+                elif array[0] == 'c':
+                    self.grid[self.name] = Rectangle(x1, y1, x2, y2,
+                                                     'Castle', False,
+                                                     'Stone', array[1], array[2],
+                                                     array[3])
+
+    def update_Grid(self):
+        for y in range(self.pixMap.boardSize + 1):
+            for x in range(self.pixMap.boardSize + 1):
+                self.name = '(%s, %s)' % (x - 1, y - 1)
+                x1 = (y - 1) * self.pixMap.tileSize
+                y1 = (x - 1) * self.pixMap.tileSize
+                x2 = y * self.pixMap.tileSize
+                y2 = x * self.pixMap.tileSize
+                array = list(self.pixMap.boardASCII[x-1][y-1])
+                array[1] = int(array[1])
+                array[2] = int(array[2])
+                array[3] = int(array[3])
+                self.grid[self.name].x1  = x1
+                self.grid[self.name].y1 = y1
+                self.grid[self.name].x2 = x2
+                self.grid[self.name].y2 = y2
+                self.grid[self.name].rProduction = array[1]
+                self.grid[self.name].armySize = array[2]
+                self.grid[self.name].player = array[3]
+                if array[0] == 'f':
+                    self.grid[self.name].tType = 'Forest'
+                elif array[0] == 'p':
+                    self.grid[self.name].tType = 'Plains'
+                elif array[0] == 's':
+                    self.grid[self.name].tType = 'Silver Deposit'
+                elif array[0] == 'q':
+                    self.grid[self.name].tType = 'Stone'
+                elif array[0] == 'v':
+                    self.grid[self.name].tType = 'Mountain'
+                elif array[0] == 'c':
+                    self.grid[self.name].tType = 'Castle'
 
     def make_Canvas(self):
         self.bgCanvas = Canvas(self.container, background = 'black', width = 1000, height = 1000)
