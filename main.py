@@ -46,6 +46,33 @@ class Main:
     def windowWheel(self, event):
         pass
 
+    def endTurn(self):
+        # This function is to run through all the player's end turns
+        self.endPlayer(self.player)
+
+    def endPlayer(self, player):
+        # This is a generalized function for any player to run through their turn things
+        print(player.claims)
+        for claim in player.claims:
+            print('tType: %s\nResource: %s\nResources Produced: %d' % (claim.tType, claim.resource, claim.rProduction))
+            if claim.resource == 'Wood':
+                self.Player.wood += claim.rProduction
+                print('Added wood')
+            elif claim.resource == 'Stone':
+                self.player.wood += claim.rProduction
+                print('Added Stone')
+            elif claim.resource == 'Food':
+                self.player.food += claim.rProduction
+                print('Added wood')
+            elif claim.resource == 'Ore':
+                self.player.metal += claim.rProduction
+                print('Added metal')
+            elif claim.resource == 'Silver':
+                self.player.silver += claim.rProduction
+                print('Added silver')
+            print(claim.resource)
+        self.update_Labels()
+
     def button_click(self, event):
         # Looks at the top left corner of the view, the 'relative 0,0'
         # and finds out where they are on the entire image
@@ -77,6 +104,14 @@ class Main:
                     if self.player.can_Claim() == 'castle':
                         self.changeTile(self.x, self.y, 'castle')
                         self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+                        self.name = '(%s, %s)' % (self.x - 1, self.y - 2)
+                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y - 2)
+                        self.name = '(%s, %s)' % (self.x - 1, self.y)
+                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y)
+                        self.name = '(%s, %s)' % (self.x - 2, self.y - 1)
+                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 2, self.y - 1)
+                        self.name = '(%s, %s)' % (self.x, self.y - 1)
+                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y - 1)
                     elif self.player.can_Claim() == True:
                         self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
                     elif self.player.can_Claim() == False:
@@ -219,14 +254,24 @@ class Main:
         self.text.config(state = DISABLED)
 
     def make_Label(self):
-        self.silverLabel = Label(self.container, text = 'Silver: ')
+        self.silverLabel = Label(self.container, text = 'Silver: %d' % self.player.silver)
         self.silverLabel.grid(row = 0, column = 0, sticky = 'NESW')
-        self.stoneLabel = Label(self.container, text = 'Stone: ')
+        self.stoneLabel = Label(self.container, text = 'Stone: %d' % self.player.stone)
         self.stoneLabel.grid(row = 0, column = 1, sticky = 'NESW')
-        self.foodLabel = Label(self.container, text = 'Food: ')
+        self.foodLabel = Label(self.container, text = 'Food: %d' % self.player.food)
         self.foodLabel.grid(row = 0, column = 2, sticky = 'NESW')
-        self.populationLabel = Label(self.container, text = 'Population: ')
+        self.populationLabel = Label(self.container, text = 'Population: %d' % self.player.population)
         self.populationLabel.grid(row = 0, column = 3, sticky = 'NESW')
+        self.metalLabel = Label(self.container, text = 'Metal: %d' % self.player.metal)
+        self.metalLabel.grid(row = 0, column = 4, sticky = 'NESW')
+
+    def update_Labels(self):
+        self.silverLabel.config(text = 'Silver: %d' % self.player.silver)
+        self.stoneLabel.config(text = 'Stone: %d' % self.player.stone)
+        self.foodLabel.config(text = 'Food: %d' % self.player.food)
+        self.populationLabel.config(text = 'Population: %d' % self.player.population)
+        self.metalLabel.config(text = 'Metal: %d' % self.player.metal)
+        print('Labels updated!')
 
     def make_Button(self):
         self.claim = False
@@ -236,8 +281,13 @@ class Main:
         self.claimButton.place(relx = 0, rely = .965, relheight = .035, relwidth = .15)
 
         self.turnButton = Button(height = 1, width = 15, bg = '#1318a1', fg = 'white',
-                                 bd = 0, font = ("Noto Sans", 12), text = 'End Turn')
+                                 bd = 0, font = ("Noto Sans", 12), text = 'End Turn',
+                                command = self.endTurn)
         self.turnButton.place(relx = .15, rely = .965, relheight = .035, relwidth = .15)
+
+        self.workedButton = Button (height = 1, width = 15, bg = '#1318a1', fg = 'white',
+                                    bd = 0, font = ('Noto Sans', 12), text = 'Assign Workers')
+        self.workedButton.place(relx = .30, rely = .965, relheight = .035, relwidth = .15)
 
     def claiming(self):
         if self.claim == True:
@@ -301,7 +351,7 @@ class Main:
                 elif array[0] == 'c':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
                                                      'Castle', False,
-                                                     'Stone', array[1], array[2],
+                                                     'Food', array[1], array[2],
                                                      array[3])
                 elif array[0] == 'm':
                     self.grid[self.name] = Rectangle(x1, y1, x2, y2,
@@ -325,7 +375,7 @@ class Main:
                 self.grid[self.name].y1 = y1
                 self.grid[self.name].x2 = x2
                 self.grid[self.name].y2 = y2
-                self.grid[self.name].rProduction = array[1]
+                self.grid[self.name].rProduction = array[1] + 1
                 self.grid[self.name].armySize = array[2]
                 self.grid[self.name].player = array[3]
                 if array[0] == 'f':
@@ -350,7 +400,7 @@ class Main:
                                 borderwidth = 0, xscrollincrement = 1,
                                 yscrollincrement = 1)
         self.bgCanvasImage = self.bgCanvas.create_image(0, 0, image = self.pixMap.board, anchor = 'nw', tags = 'map')
-        self.bgCanvas.grid(row = 1, column = 0, rowspan = 6, columnspan = 4, sticky = 'NESW')
+        self.bgCanvas.grid(row = 1, column = 0, rowspan = 6, columnspan = 5, sticky = 'NESW')
 
     def quit(self, event):
         self.master.destroy()

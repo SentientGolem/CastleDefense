@@ -14,9 +14,9 @@ class Player():
     def can_Claim(self):
         if len(self.claims) == 0:
             return 'castle'
-        elif len(self.claims) - 5 >= self.population:
+        elif len(self.claims) - 4 >= self.population:
             return False
-        elif len(self.claims) - 5 < self.population:
+        elif len(self.claims) - 4 < self.population:
              return True
 
     def claim(self, rectangle, board, x, y):
