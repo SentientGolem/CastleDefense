@@ -73,55 +73,54 @@ class Main:
             print(claim.resource)
         self.update_Labels()
 
-    def button_click(self, event):
+    def findRectangle(self, passed_event):
         # Looks at the top left corner of the view, the 'relative 0,0'
-        # and finds out where they are on the entire image
-        (cx0, cy0) = (self.bgCanvas.canvasx(0), self.bgCanvas.canvasy(0))
-        # Adds the 'relative 0,0' of the canvas and adds them with the 
-        # relative location of the cursor to get the actual location 
-        # of the picture
-        self.xClick = cx0 + event.x
-        self.yClick = cy0 + event.y
-        # Testing code to ensure the clicked location is accurate
-        print('{}, {})'.format(self.xClick, self.yClick))
-        # Begins iteration through the entire grid looking for the 
-        # matching coordinates to a specific object
+        # and finds the coordinates in relation to the whole image
+        (self.cx0, self.cy0) = (self.bgCanvas.canvasx(0), self.bgCanvas.canvasy(0))
+        # This adds the relative coordinates to the coordinates of the mouse click
+        # to find the actual location of the click in relation to the whole image.
+        self.xClick = self.cx0 + passed_event.x
+        self.yClick = self.cy0 + passed_event.y
+        # Looks for which specific rectangle we are looking for
         for name, rectangles in self.grid.items():
             if rectangles.contains(self.xClick, self.yClick):
-                # Testing code to tell which rectangle it is
-                print('This worked! %s' % name)
-                # Testing code to tell the exact coordinates this 
-                # rectangle object keeps track of
-                rectangles.report()
-                # This changes the larger of the two sets of coordinates
-                # back into their specific grid location as the coordinates
-                # should always be the tile size * the index
-                self.x = int((rectangles.y1 / self.pixMap.tileSize) + 1)
-                self.y = int((rectangles.x1 / self.pixMap.tileSize) + 1)
-                # Calls the change that should happen
-                # Checks if claiming is currently on
-                if self.claim == True:
-                    if self.player.can_Claim() == 'castle':
-                        self.changeTile(self.x, self.y, 'castle')
-                        self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
-                        self.name = '(%s, %s)' % (self.x - 1, self.y - 2)
-                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y - 2)
-                        self.name = '(%s, %s)' % (self.x - 1, self.y)
-                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y)
-                        self.name = '(%s, %s)' % (self.x - 2, self.y - 1)
-                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 2, self.y - 1)
-                        self.name = '(%s, %s)' % (self.x, self.y - 1)
-                        self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y - 1)
-                    elif self.player.can_Claim() == True:
-                        self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
-                    elif self.player.can_Claim() == False:
-                        print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
+                return (rectangles, name)
 
-                    self.update_Grid()
-                else:
-                    print('Claiming is off!')
-                    # Returns the function so that multiple rectangles can't be clicked
-                return
+    def workTile(self, event):
+        pass
+
+    def button_click(self, event):
+        # This takes the pixel coordinates of the rectangle
+        # and changes them into the indices for the list
+        # should always be the tile size * the index
+        self.x = int((rectangles.y1 / self.pixMap.tileSize) + 1)
+        self.y = int((rectangles.x1 / self.pixMap.tileSize) + 1)
+        # Calls the change that should happen
+        # Checks if claiming is currently on
+        if self.claim == True:
+            if self.player.can_Claim() == 'castle':
+                # This is for the first claim where the player gets the directly
+                # adjacent tiles as well as the selected tile
+                self.changeTile(self.x, self.y, 'castle')
+                self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+                self.name = '(%s, %s)' % (self.x - 1, self.y - 2)
+                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y - 2)
+                self.name = '(%s, %s)' % (self.x - 1, self.y)
+                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y)
+                self.name = '(%s, %s)' % (self.x - 2, self.y - 1)
+                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 2, self.y - 1)
+                self.name = '(%s, %s)' % (self.x, self.y - 1)
+                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y - 1)
+            elif self.player.can_Claim() == True:
+                self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
+            elif self.player.can_Claim() == False:
+                print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
+
+            self.update_Grid()
+        else:
+            print('Claiming is off!')
+            # Returns the function so that multiple rectangles can't be clicked
+        return
 
     def changeTile(self, x, y, newTile):
         # Changes the ASCII board that the picture is based on
