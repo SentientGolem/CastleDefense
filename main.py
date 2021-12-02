@@ -90,6 +90,7 @@ class Main:
         pass
 
     def button_click(self, event):
+        (rectangles, name) = self.findRectangle(event)
         # This takes the pixel coordinates of the rectangle
         # and changes them into the indices for the list
         # should always be the tile size * the index
@@ -103,12 +104,16 @@ class Main:
                 # adjacent tiles as well as the selected tile
                 self.changeTile(self.x, self.y, 'castle')
                 self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
-                self.name = '(%s, %s)' % (self.x - 1, self.y - 2)
-                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y - 2)
+                # Claims Southern Tile
+                self.name = '(%s, %s)' % (self.x, self.y + 1)
+                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y + 1)
+                # Claims Western Tile
                 self.name = '(%s, %s)' % (self.x - 1, self.y)
                 self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y)
-                self.name = '(%s, %s)' % (self.x - 2, self.y - 1)
-                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 2, self.y - 1)
+                # Claims Eastern Tile
+                self.name = '(%s, %s)' % (self.x + 1, self.y)
+                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x + 1, self.y)
+                # Claims Northern Tile
                 self.name = '(%s, %s)' % (self.x, self.y - 1)
                 self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y - 1)
             elif self.player.can_Claim() == True:
