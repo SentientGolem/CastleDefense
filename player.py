@@ -11,13 +11,23 @@ class Player():
 
         self.claims = []
 
-    def can_Claim(self):
+    def can_Claim(self, adjacent):
+        # If there are no current claims, run through
+        # the preliminary claims
         if len(self.claims) == 0:
             return 'castle'
-        elif len(self.claims) - 4 >= self.population:
+        # Needs to check if your claims exceeds your pop
+        # and if your new claim is adjacent to another
+        elif len(self.claims) - 9 < self.population:
+            # Checks if any of the rectangles adjacent to the
+            # selected rectangle are already claimed
+            for rectangle in adjacent:
+                if rectangle in self.claims:
+                     return True
+            # If it can't find any, it returns false
             return False
-        elif len(self.claims) - 4 < self.population:
-             return True
+        else:
+            return False
 
     def claim(self, rectangle, board, x, y):
         # We need to assign the correct rectangle but the grid

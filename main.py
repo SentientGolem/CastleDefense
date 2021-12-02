@@ -96,36 +96,46 @@ class Main:
         # should always be the tile size * the index
         self.x = int((rectangles.y1 / self.pixMap.tileSize) + 1)
         self.y = int((rectangles.x1 / self.pixMap.tileSize) + 1)
-        # Calls the change that should happen
+       # Calls the change that should happen
         # Checks if claiming is currently on
         if self.claim == True:
-            if self.player.can_Claim() == 'castle':
+            adjacent = []
+            # North Adjacent
+            self.name = '(%s, %s)' % (self.x, self.y - 1)
+            adjacent.append(self.grid[self.name])
+            # East Adjacent
+            self.name = '(%s, %s)' % (self.x + 1, self.y)
+            adjacent.append(self.grid[self.name])
+            # South Adjacent
+            self.name = '(%s, %s)' % (self.x, self.y + 1)
+            adjacent.append(self.grid[self.name])
+            # West Adjacent
+            self.name = '(%s, %s)' % (self.x - 1, self.y)
+            adjacent.append(self.grid[self.name])
+            # Checks to see how to run the claim
+            if self.player.can_Claim(adjacent) == 'castle':
                 # This is for the first claim where the player gets the directly
                 # adjacent tiles as well as the selected tile
                 self.changeTile(self.x, self.y, 'castle')
                 self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
                 # Claims Southern Tile
-                self.name = '(%s, %s)' % (self.x, self.y + 1)
-                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y + 1)
+                self.player.claim(adjacent[2], self.pixMap.boardASCII, self.x, self.y + 1)
                 # Claims Western Tile
-                self.name = '(%s, %s)' % (self.x - 1, self.y)
-                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x - 1, self.y)
+                self.player.claim(adjacent[3], self.pixMap.boardASCII, self.x - 1, self.y)
                 # Claims Eastern Tile
-                self.name = '(%s, %s)' % (self.x + 1, self.y)
-                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x + 1, self.y)
+                self.player.claim(adjacent[1], self.pixMap.boardASCII, self.x + 1, self.y)
                 # Claims Northern Tile
-                self.name = '(%s, %s)' % (self.x, self.y - 1)
-                self.player.claim(self.grid[self.name], self.pixMap.boardASCII, self.x, self.y - 1)
-            elif self.player.can_Claim() == True:
+                self.player.claim(adjacent[0], self.pixMap.boardASCII, self.x, self.y - 1)
+            # Claims if player is able to claim that tile
+            elif self.player.can_Claim(adjacent) == True:
                 self.player.claim(rectangles, self.pixMap.boardASCII, self.x, self.y)
-            elif self.player.can_Claim() == False:
+            # Prints out error if player is unable to claim that tile
+            elif self.player.can_Claim(adjacent) == False:
                 print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
 
             self.update_Grid()
         else:
             print('Claiming is off!')
-            # Returns the function so that multiple rectangles can't be clicked
-        return
 
     def changeTile(self, x, y, newTile):
         # Changes the ASCII board that the picture is based on
