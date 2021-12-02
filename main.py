@@ -132,12 +132,13 @@ class Main:
             # Prints out error if player is unable to claim that tile
             elif self.player.can_Claim(adjacent) == False:
                 print('Cannot claim\nPopulation: %d\nClaims: %d' % (self.player.population, len(self.player.claims)))
-
             self.update_Grid()
+            self.toolTip(event)
         else:
             print('Claiming is off!')
 
     def changeTile(self, x, y, newTile):
+
         # Changes the ASCII board that the picture is based on
         if newTile == 'castle':
             tile = self.pixMap.castle
@@ -154,22 +155,15 @@ class Main:
         self.bgCanvasImage = self.bgCanvas.create_image(0, 0, image = self.pixMap.board, anchor = 'nw', tags = 'map')
 
     def toolTip(self, event):
-        # Finds the 'relative 0,0'
-        (cx0, cy0) = (self.bgCanvas.canvasx(0), self.bgCanvas.canvasy(0))
-        # Creates the true location of the cursor
-        self.xClick = cx0 + event.x
-        self.yClick = cy0 + event.y
-        # Begins iteration through the rectangles objects
-        for name, rectangles in self.grid.items():
-            if rectangles.contains(self.xClick, self.yClick):
-                self.text.config(state = NORMAL)
-                self.text.delete('1.0', 'end')
-                self.text.insert('end', '%s\nWorking: %s\nResource: %s\nProduces: %d\n Army: %d\nCoordinates: (%d, %d)\nPlayer: %d' %
-                                 (rectangles.tType, rectangles.worker,
-                                  rectangles.resource, rectangles.rProduction,
-                                 rectangles.armySize, (rectangles.x2 / self.pixMap.tileSize) - 1,
-                                  (rectangles.y2 / self.pixMap.tileSize) - 1, rectangles.player))
-                self.text.config(state = DISABLED)
+        (rectangles, name) = self.findRectangle(event)
+        self.text.config(state = NORMAL)
+        self.text.delete('1.0', 'end')
+        self.text.insert('end', '%s\nWorking: %s\nResource: %s\nProduces: %d\n Army: %d\nCoordinates: (%d, %d)\nPlayer: %d' %
+                         (rectangles.tType, rectangles.worker,
+                          rectangles.resource, rectangles.rProduction,
+                         rectangles.armySize, (rectangles.x2 / self.pixMap.tileSize) - 1,
+                          (rectangles.y2 / self.pixMap.tileSize) - 1, rectangles.player))
+        self.text.config(state = DISABLED)
 
     def toggleText(self, event):
         # Checks to see if the text box is visible
