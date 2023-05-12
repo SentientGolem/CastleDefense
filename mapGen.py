@@ -17,12 +17,12 @@ class mapGen():
 
     def setPictures(self):
         self.castle = Image.open('Images/Castle.jpg').resize((self.tileSize, self.tileSize))
-        self.forest = Image.open('Images/treeJeff3.png').resize((self.tileSize, self.tileSize))
-        self.plains = Image.open('Images/plainsJeff2.png').resize((self.tileSize, self.tileSize))
-        self.silverMine = Image.open('Images/SilverMine.jpg').resize((self.tileSize, self.tileSize))
-        self.stoneDeposit = Image.open('Images/StoneDeposit.jpg').resize((self.tileSize, self.tileSize))
-        self.mountain = Image.open('Images/Mountain.png').resize((self.tileSize, self.tileSize))
-        self.metal = Image.open('Images/metal.png').resize((self.tileSize, self.tileSize))
+        self.forest = Image.open('Images/tiles/tree.png').resize((self.tileSize, self.tileSize))
+        self.plains = Image.open('Images/tiles/s_flowers.png').resize((self.tileSize, self.tileSize))
+        self.silverMine = Image.open('Images/tiles/s_mountain.png').resize((self.tileSize, self.tileSize))
+        self.stoneDeposit = Image.open('Images/tiles/mountain.png').resize((self.tileSize, self.tileSize))
+        self.mountain = Image.open('Images/tiles/mountain.png').resize((self.tileSize, self.tileSize))
+        self.metal = Image.open('Images/tiles/g_mountain.png').resize((self.tileSize, self.tileSize))
 
     def generateBoard(self):
         self.plainsCode = 'p000'

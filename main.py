@@ -40,7 +40,7 @@ class Main:
         if platform.startswith('linux'):
             master.bind('<Button-4>', lambda event: self.zoom(event, 'in'))
             master.bind('<Button-5>', lambda event: self.zoom(event, 'out'))
-        elif playform.startswith('win32') or sys.platform.startswith('cygwin'):
+        elif platform.startswith('win32') or platform.startswith('cygwin'):
             master.bind('<MouseWheel>', self.windowWheel)
 
     def windowWheel(self, event):
@@ -56,7 +56,7 @@ class Main:
         for claim in player.claims:
             print('tType: %s\nResource: %s\nResources Produced: %d' % (claim.tType, claim.resource, claim.rProduction))
             if claim.resource == 'Wood':
-                self.Player.wood += claim.rProduction
+                self.player.wood += claim.rProduction
                 print('Added wood')
             elif claim.resource == 'Stone':
                 self.player.wood += claim.rProduction
@@ -293,9 +293,9 @@ class Main:
                                 command = self.endTurn)
         self.turnButton.place(relx = .15, rely = .965, relheight = .035, relwidth = .15)
 
-        self.workedButton = Button (height = 1, width = 15, bg = '#1318a1', fg = 'white',
-                                    bd = 0, font = ('Noto Sans', 12), text = 'Assign Workers')
-        self.workedButton.place(relx = .30, rely = .965, relheight = .035, relwidth = .15)
+        #self.workedButton = Button (height = 1, width = 15, bg = '#1318a1', fg = 'white',
+        #                            bd = 0, font = ('Noto Sans', 12), text = 'Assign Workers')
+        #self.workedButton.place(relx = .30, rely = .965, relheight = .035, relwidth = .15)
 
     def claiming(self):
         if self.claim == True:
